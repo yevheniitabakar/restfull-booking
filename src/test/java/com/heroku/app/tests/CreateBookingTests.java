@@ -1,19 +1,21 @@
-package com.heroku.app;
+package com.heroku.app.tests;
 
 import static io.restassured.RestAssured.given;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 import com.heroku.app.api.auth.NoAuthStrategy;
 import com.heroku.app.api.response.BookingResponse;
 import com.heroku.app.api.response.BookingResponseAdapter;
+import com.heroku.app.base.BaseBookingTest;
 import com.heroku.app.factory.BookingRequestFactory;
 import io.restassured.module.jsv.JsonSchemaValidator;
 import com.heroku.app.model.Booking;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
-public class CreateBookingTests extends BaseBookingTest{
+public class CreateBookingTests extends BaseBookingTest {
     private Booking booking;
 
     @Override
@@ -44,7 +46,7 @@ public class CreateBookingTests extends BaseBookingTest{
     @Test
     public void testCreateBookingSchemaValidation() {
         booking = new BookingRequestFactory().createRequest();
-        api.setAuthStrategy(null);
+        api.setAuthStrategy(new NoAuthStrategy());
         BookingResponse response = api.createBooking(booking);
 
         assertTrue(response.isSuccessful());
@@ -66,6 +68,6 @@ public class CreateBookingTests extends BaseBookingTest{
         BookingResponse response = new BookingResponseAdapter(given().body("").post("/booking"));
 
         assertFalse(response.isSuccessful());
-        assertEquals(response.getStatusCode(), 500);
+        assertEquals(500, response.getStatusCode());
     }
 }

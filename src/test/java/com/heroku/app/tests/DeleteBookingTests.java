@@ -1,13 +1,14 @@
-package com.heroku.app;
+package com.heroku.app.tests;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.heroku.app.api.auth.BasicAuthStrategy;
 import com.heroku.app.api.auth.TokenAuthStrategy;
 import com.heroku.app.api.response.BookingResponse;
-import org.testng.annotations.Test;
+import com.heroku.app.base.BaseBookingTest;
+import org.junit.jupiter.api.Test;
 
 public class DeleteBookingTests extends BaseBookingTest {
 
@@ -25,11 +26,11 @@ public class DeleteBookingTests extends BaseBookingTest {
     @Override
     protected void validateResponse(BookingResponse response) {
         assertTrue(response.isSuccessful());
-        assertEquals(response.getStatusCode(), 201); // DELETE returns 201 "Created" in RESTful Booker
+        assertEquals(201, response.getStatusCode()); // DELETE returns 201 "Created" in RESTful Booker
 
         // Verify the booking is deleted by attempting to get it
         BookingResponse getResponse = api.getBooking(bookingId);
-        assertEquals(getResponse.getStatusCode(), 404); // Should return 404 Not Found
+        assertEquals(404, getResponse.getStatusCode()); // Should return 404 Not Found
     }
 
     @Test
@@ -54,7 +55,7 @@ public class DeleteBookingTests extends BaseBookingTest {
         BookingResponse deleteResponse = api.deleteBooking(999999);
 
         assertFalse(deleteResponse.isSuccessful());
-        assertEquals(deleteResponse.getStatusCode(), 405);
+        assertEquals(405, deleteResponse.getStatusCode());
     }
 
     @Test
@@ -64,6 +65,6 @@ public class DeleteBookingTests extends BaseBookingTest {
         BookingResponse deleteResponse = api.deleteBooking(bookingId);
 
         assertFalse(deleteResponse.isSuccessful());
-        assertEquals(deleteResponse.getStatusCode(), 403);
+        assertEquals(403, deleteResponse.getStatusCode());
     }
 }

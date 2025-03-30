@@ -1,4 +1,4 @@
-package com.heroku.app;
+package com.heroku.app.base;
 
 import com.heroku.app.api.BookingApiFacade;
 import com.heroku.app.api.auth.NoAuthStrategy;

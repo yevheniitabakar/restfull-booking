@@ -1,16 +1,20 @@
-package com.heroku.app;
+package com.heroku.app.tests;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.heroku.app.api.auth.BasicAuthStrategy;
 import com.heroku.app.api.auth.TokenAuthStrategy;
 import com.heroku.app.api.response.BookingResponse;
+import com.heroku.app.base.BaseBookingTest;
 import com.heroku.app.model.Booking;
-import org.testng.Assert;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class PartialUpdateBookingTest extends BaseBookingTest{
+public class PartialUpdateBookingTest extends BaseBookingTest {
     @Override
     protected void setup() {
         createBooking();
@@ -26,11 +30,11 @@ public class PartialUpdateBookingTest extends BaseBookingTest{
 
     @Override
     protected void validateResponse(BookingResponse response) {
-        Assert.assertTrue(response.isSuccessful());
-        Assert.assertEquals(response.getStatusCode(), 200);
+        assertTrue(response.isSuccessful());
+        assertEquals(200, response.getStatusCode());
         Booking updatedBooking = response.getBookingDetails();
-        Assert.assertEquals(updatedBooking.getFirstname(), "Jane");
-        Assert.assertEquals(updatedBooking.getLastname(), booking.getLastname()); // Unchanged field
+        assertEquals("Jane", updatedBooking.getFirstname());
+        assertEquals(updatedBooking.getLastname(), booking.getLastname()); // Unchanged field
     }
 
     @Test
@@ -45,10 +49,10 @@ public class PartialUpdateBookingTest extends BaseBookingTest{
         Map<String, Object> updates = new HashMap<>();
         updates.put("firstname", "Jane");
         BookingResponse response = api.partialUpdateBooking(bookingId, updates);
-        Assert.assertTrue(response.isSuccessful());
-        Assert.assertEquals(response.getStatusCode(), 200);
+        assertTrue(response.isSuccessful());
+        assertEquals(200, response.getStatusCode());
         Booking updatedBooking = response.getBookingDetails();
-        Assert.assertEquals(updatedBooking.getFirstname(), "Jane");
+        assertEquals("Jane", updatedBooking.getFirstname());
     }
 
     @Test
@@ -58,8 +62,8 @@ public class PartialUpdateBookingTest extends BaseBookingTest{
         Map<String, Object> updates = new HashMap<>();
         updates.put("firstname", "Jane");
         BookingResponse response = api.partialUpdateBooking(bookingId, updates);
-        Assert.assertFalse(response.isSuccessful());
-        Assert.assertEquals(response.getStatusCode(), 403);
+        assertFalse(response.isSuccessful());
+        assertEquals(403, response.getStatusCode());
     }
 
     @Test
@@ -69,7 +73,7 @@ public class PartialUpdateBookingTest extends BaseBookingTest{
         Map<String, Object> updates = new HashMap<>();
         updates.put("firstname", "Jane");
         BookingResponse response = api.partialUpdateBooking(999999, updates);
-        Assert.assertFalse(response.isSuccessful());
-        Assert.assertEquals(response.getStatusCode(), 404);
+        assertFalse(response.isSuccessful());
+        assertEquals(404, response.getStatusCode());
     }
 }

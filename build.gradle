@@ -20,19 +20,32 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.testng:testng:7.8.0'
+    // Lombok for boilerplate code reduction
     implementation 'org.projectlombok:lombok:1.18.34'
     annotationProcessor 'org.projectlombok:lombok:1.18.34'
+
+    // Rest Assured for API testing
     implementation 'io.rest-assured:rest-assured:5.4.0'
-
-    testImplementation 'org.testng:testng:7.8.0'
-    testImplementation('org.projectlombok:lombok:1.18.34')
-    testAnnotationProcessor('org.projectlombok:lombok:1.18.34')
-
-    testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.15.0'
     testImplementation 'io.rest-assured:json-schema-validator:5.4.0'
+
+    // JUnit 5 Core API for writing tests
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
+    // JUnit 5 Engine for running tests
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+    // JUnit 5 Suite to run multiple classes as a test suite
+    testImplementation 'org.junit.platform:junit-platform-suite:1.10.0'
+    // JUnit 5 Parameterized tests support
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.10.0'
+    // Optional: JUnit Platform Reporting for generating reports
+    testImplementation 'org.junit.platform:junit-platform-reporting:1.10.0'
+
+    // AssertJ for fluent assertions (optional, but useful)
+    testImplementation 'org.assertj:assertj-core:3.25.0'
 }
 
 test {
-    useTestNG()
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
 }

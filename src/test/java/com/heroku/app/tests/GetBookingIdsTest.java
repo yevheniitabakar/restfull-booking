@@ -1,8 +1,11 @@
-package com.heroku.app;
+package com.heroku.app.tests;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.heroku.app.api.response.BookingResponse;
-import org.testng.Assert;
-import org.testng.annotations.Test;
+import com.heroku.app.base.BaseBookingTest;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,11 +23,11 @@ public class GetBookingIdsTest extends BaseBookingTest {
 
     @Override
     protected void validateResponse(BookingResponse response) {
-        Assert.assertTrue(response.isSuccessful());
-        Assert.assertEquals(response.getStatusCode(), 200);
+        assertTrue(response.isSuccessful());
+        assertEquals(200, response.getStatusCode());
         // Validate that the response contains the created booking ID
         String responseBody = response.getBody().asString();
-        Assert.assertTrue(responseBody.contains(String.valueOf(bookingId)));
+        assertTrue(responseBody.contains(String.valueOf(bookingId)));
     }
 
     @Test
@@ -38,10 +41,10 @@ public class GetBookingIdsTest extends BaseBookingTest {
         Map<String, String> queryParams = new HashMap<>();
         queryParams.put("firstname", booking.getFirstname());
         BookingResponse response = api.getBookingIds(queryParams);
-        Assert.assertTrue(response.isSuccessful());
-        Assert.assertEquals(response.getStatusCode(), 200);
+        assertTrue(response.isSuccessful());
+        assertEquals(200, response.getStatusCode());
         String responseBody = response.getBody().asString();
-        Assert.assertTrue(responseBody.contains(String.valueOf(bookingId)));
+        assertTrue(responseBody.contains(String.valueOf(bookingId)));
     }
 
     @Test
@@ -49,7 +52,7 @@ public class GetBookingIdsTest extends BaseBookingTest {
         Map<String, String> queryParams = new HashMap<>();
         queryParams.put("invalidParam", "value");
         BookingResponse response = api.getBookingIds(queryParams);
-        Assert.assertTrue(response.isSuccessful()); // API ignores invalid params
-        Assert.assertEquals(response.getStatusCode(), 200);
+        assertTrue(response.isSuccessful()); // API ignores invalid params
+        assertEquals(200, response.getStatusCode());
     }
 }

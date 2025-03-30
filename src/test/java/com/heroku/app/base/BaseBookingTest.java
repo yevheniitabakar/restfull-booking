@@ -3,9 +3,11 @@ package com.heroku.app.base;
 import com.heroku.app.api.BookingApiFacade;
 import com.heroku.app.api.auth.NoAuthStrategy;
 import com.heroku.app.api.response.BookingResponse;
+import com.heroku.app.checks.PreTestCheckInitializer;
 import com.heroku.app.factory.BookingRequestFactory;
 import com.heroku.app.model.BookingResponseWrapper;
 import com.heroku.app.model.Booking;
+import org.junit.jupiter.api.BeforeAll;
 
 /**
  * Abstract base class implementing the Template Method design pattern for standardizing test execution flow.
@@ -23,6 +25,12 @@ public abstract class BaseBookingTest {
     protected abstract void setup();
     protected abstract BookingResponse performAction();
     protected abstract void validateResponse(BookingResponse response);
+
+    @BeforeAll
+    public static void runPreTestChecks() {
+        BookingApiFacade apiFacade = new BookingApiFacade();
+        PreTestCheckInitializer.runChecks(apiFacade);
+    }
 
     public void executeTest() {
         setup();

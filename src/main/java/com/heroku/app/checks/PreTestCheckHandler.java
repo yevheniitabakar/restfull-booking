@@ -14,17 +14,19 @@ import com.heroku.app.api.BookingApiFacade;
 public abstract class PreTestCheckHandler {
     private PreTestCheckHandler nextHandler;
 
-    public PreTestCheckHandler setNext(PreTestCheckHandler nextHandler) {
+    public void setNext(PreTestCheckHandler nextHandler) {
         this.nextHandler = nextHandler;
-        return nextHandler;
     }
 
-    public void check(BookingApiFacade api) {
-        performCheck(api);
-        if (nextHandler != null) {
-            nextHandler.check(api);
+    public void check(BookingApiFacade apiFacade) {
+        if (performCheck(apiFacade)) {
+            if (nextHandler != null) {
+                nextHandler.check(apiFacade);
+            }
+        } else {
+            throw new RuntimeException(this.getClass().getSimpleName() + " failed! Aborting tests.");
         }
     }
 
-    protected abstract void performCheck(BookingApiFacade api);
+    protected abstract boolean performCheck(BookingApiFacade apiFacade);
 }

@@ -1,0 +1,13 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<suite name="RegressionSuite">
+    <listeners>
+        <listener class-name="com.heroku.app.checks.PreTestCheckListener"/>
+    </listeners>
+    <test name="BookingTests">
+        <classes>
+            <class name="com.heroku.app.CreateBookingTest"/>
+            <class name="com.heroku.app.DeleteBookingTest"/>
+        </classes>
+    </test>
+</suite>

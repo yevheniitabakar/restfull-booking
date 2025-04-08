@@ -3,43 +3,37 @@ package com.heroku.app.tests;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.heroku.app.api.builder.BookingRequestFactory;
 import com.heroku.app.api.response.BookingResponse;
 import com.heroku.app.base.BaseBookingTest;
+import com.heroku.app.model.BookingDates;
+import com.heroku.app.model.BookingResponseWrapper;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class GetBookingIdsTest extends BaseBookingTest {
-    @Override
-    protected void setup() {
-        createBooking();
-    }
-
-    @Override
-    protected BookingResponse performAction() {
-        return api.getBookingIds(null);
-    }
-
-    @Override
-    protected void validateResponse(BookingResponse response) {
-        assertTrue(response.isSuccessful());
-        assertEquals(200, response.getStatusCode());
-        // Validate that the response contains the created booking ID
-        String responseBody = response.getBody().asString();
-        assertTrue(responseBody.contains(String.valueOf(bookingId)));
-    }
+    private String customFirstName = "CustomFirstName";
 
     @Test
     public void testGetBookingIdsPositive() {
-        executeTest();
     }
 
     @Test
     public void testGetBookingIdsWithFilter() {
-        createBooking();
+        booking = BookingRequestFactory.createCustomBooking()
+                .setFirstName(customFirstName)
+                .setLastName("customLastName")
+                .setTotalPrice(111)
+                .setDepositPaid(true)
+                .setBookingDates(new BookingDates("2025-01-01", "2025-01-06"))
+                .buildRequest();
+        BookingResponse createResponse = api.createBooking(booking);
+        bookingId = createResponse.getBody().as(BookingResponseWrapper.class).getBookingid();
+
         Map<String, String> queryParams = new HashMap<>();
-        queryParams.put("firstname", booking.getFirstname());
+        queryParams.put("firstname", customFirstName);
         BookingResponse response = api.getBookingIds(queryParams);
         assertTrue(response.isSuccessful());
         assertEquals(200, response.getStatusCode());

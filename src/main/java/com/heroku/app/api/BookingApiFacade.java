@@ -3,13 +3,15 @@ package com.heroku.app.api;
 import static io.restassured.RestAssured.given;
 
 import com.heroku.app.api.auth.AuthStrategy;
+import com.heroku.app.api.response.BookingIdsResponseAdapter;
 import com.heroku.app.api.response.BookingResponse;
 import com.heroku.app.api.response.BookingResponseAdapter;
 import com.heroku.app.config.RestClientConfig;
+import com.heroku.app.model.Booking;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+import lombok.Getter;
 import lombok.Setter;
-import com.heroku.app.model.Booking;
 
 import java.util.Map;
 
@@ -22,6 +24,7 @@ import java.util.Map;
  * </p>
  */
 public class BookingApiFacade {
+    @Getter
     private final RestClientConfig clientConfig = RestClientConfig.getInstance();
     @Setter
     private AuthStrategy authStrategy;
@@ -51,7 +54,7 @@ public class BookingApiFacade {
         }
         Response response = spec.get("/booking");
 
-        return new BookingResponseAdapter(response);
+        return new BookingIdsResponseAdapter(response);
     }
 
     public BookingResponse getBooking(int id) {
@@ -61,7 +64,10 @@ public class BookingApiFacade {
     }
 
     public BookingResponse updateBooking(int id, Booking booking) {
-        RequestSpecification spec = given().body(booking);
+        RequestSpecification spec = given()
+                .contentType("application/json")
+                .accept("application/json")
+                .body(booking);
         if (authStrategy != null) {
             authStrategy.applyAuth(spec);
         }
@@ -71,7 +77,9 @@ public class BookingApiFacade {
     }
 
     public BookingResponse partialUpdateBooking(int id, Map<String, Object> updates) {
-        RequestSpecification spec = given().body(updates);
+        RequestSpecification spec = given()
+                .contentType("application/json")
+                .body(updates);
         if (authStrategy != null) {
             authStrategy.applyAuth(spec);
         }

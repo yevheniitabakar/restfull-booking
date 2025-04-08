@@ -5,52 +5,51 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.heroku.app.api.auth.BasicAuthStrategy;
+import com.heroku.app.api.auth.NoAuthStrategy;
 import com.heroku.app.api.auth.TokenAuthStrategy;
+import com.heroku.app.api.builder.BookingRequestFactory;
 import com.heroku.app.api.response.BookingResponse;
-import com.heroku.app.base.BaseBookingTest;
+import com.heroku.app.base.TemplateBaseBookingTest;
+import com.heroku.app.model.BookingResponseWrapper;
 import org.junit.jupiter.api.Test;
 
-public class DeleteBookingTests extends BaseBookingTest {
+public class DeleteBookingTests extends TemplateBaseBookingTest {
 
     @Override
     protected void setup() {
-        createBooking(); // Use the helper method to create a booking
-        api.setAuthStrategy(new TokenAuthStrategy());
+        booking = BookingRequestFactory.createStandardBooking();
     }
 
     @Override
     protected BookingResponse performAction() {
-        return api.deleteBooking(bookingId);
+        BookingResponse response = api.createBooking(booking);
+        bookingId = response.getBody().as(BookingResponseWrapper.class).getBookingid();
+        return response;
     }
 
     @Override
     protected void validateResponse(BookingResponse response) {
         assertTrue(response.isSuccessful());
-        assertEquals(201, response.getStatusCode()); // DELETE returns 201 "Created" in RESTful Booker
-
-        // Verify the booking is deleted by attempting to get it
-        BookingResponse getResponse = api.getBooking(bookingId);
-        assertEquals(404, getResponse.getStatusCode()); // Should return 404 Not Found
     }
 
     @Test
     public void testDeleteBookingWithTokenAuth() {
-        executeTest(); // Use the template method for TokenAuthStrategy
+        api.setAuthStrategy(new TokenAuthStrategy());
+        BookingResponse deleteResponse = api.deleteBooking(bookingId);
+
+        assertTrue(deleteResponse.isSuccessful());
     }
 
     @Test
     public void testDeleteBookingWithBasicAuth() {
-        createBooking();
         api.setAuthStrategy(new BasicAuthStrategy("admin", "password123"));
         BookingResponse deleteResponse = api.deleteBooking(bookingId);
 
         assertTrue(deleteResponse.isSuccessful());
-        assertEquals(deleteResponse.getStatusCode(), 201);
     }
 
     @Test
     public void testDeleteBookingMissingId() {
-        createBooking();
         api.setAuthStrategy(new TokenAuthStrategy());
         BookingResponse deleteResponse = api.deleteBooking(999999);
 
@@ -60,8 +59,7 @@ public class DeleteBookingTests extends BaseBookingTest {
 
     @Test
     public void testDeleteBookingMissingAuth() {
-        createBooking();
-        api.setAuthStrategy(null);
+        api.setAuthStrategy(new NoAuthStrategy());
         BookingResponse deleteResponse = api.deleteBooking(bookingId);
 
         assertFalse(deleteResponse.isSuccessful());

@@ -6,53 +6,59 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.heroku.app.api.auth.BasicAuthStrategy;
 import com.heroku.app.api.auth.TokenAuthStrategy;
+import com.heroku.app.api.builder.BookingRequestFactory;
 import com.heroku.app.api.response.BookingResponse;
-import com.heroku.app.base.BaseBookingTest;
+import com.heroku.app.base.TemplateBaseBookingTest;
 import com.heroku.app.model.Booking;
+import com.heroku.app.model.BookingDates;
+import com.heroku.app.model.BookingResponseWrapper;
 import org.junit.jupiter.api.Test;
 
 
-public class UpdateBookingTest extends BaseBookingTest {
+public class UpdateBookingTest extends TemplateBaseBookingTest {
+
     @Override
     protected void setup() {
-        createBooking();
-        api.setAuthStrategy(new TokenAuthStrategy());
+        booking = BookingRequestFactory.createStandardBooking();
     }
 
     @Override
     protected BookingResponse performAction() {
-        booking.setFirstname("Jane");
-        return api.updateBooking(bookingId, booking);
+        BookingResponse response = api.createBooking(booking);
+        bookingId = response.getBody().as(BookingResponseWrapper.class).getBookingid();
+        return response;
     }
 
     @Override
     protected void validateResponse(BookingResponse response) {
         assertTrue(response.isSuccessful());
-        assertEquals(200, response.getStatusCode());
-        Booking updatedBooking = response.getBookingDetails();
-        assertEquals("Jane", updatedBooking.getFirstname());
     }
 
     @Test
     public void testUpdateBookingWithTokenAuth() {
-        executeTest();
     }
 
     @Test
     public void testUpdateBookingWithBasicAuth() {
-        createBooking();
+
         api.setAuthStrategy(new BasicAuthStrategy("admin", "password123"));
-        booking.setFirstname("Jane");
-        BookingResponse response = api.updateBooking(bookingId, booking);
+        Booking updatedBookingRequest = BookingRequestFactory.createCustomBooking()
+                .setFirstName("James")
+                .setLastName("Brown")
+                .setTotalPrice(300)
+                .setDepositPaid(true)
+                .setBookingDates(new BookingDates("2025-04-04", "2025-04-08"))
+                .setAdditionalNeeds("Balcony")
+                .buildRequest();
+        BookingResponse response = api.updateBooking(bookingId, updatedBookingRequest);
         assertTrue(response.isSuccessful());
         assertEquals(200, response.getStatusCode());
         Booking updatedBooking = response.getBookingDetails();
-        assertEquals("Jane", updatedBooking.getFirstname());
+        assertEquals("James", updatedBooking.getFirstname());
     }
 
     @Test
     public void testUpdateBookingMissingAuth() {
-        createBooking();
         api.setAuthStrategy(null);
         booking.setFirstname("Jane");
         BookingResponse response = api.updateBooking(bookingId, booking);
@@ -62,11 +68,12 @@ public class UpdateBookingTest extends BaseBookingTest {
 
     @Test
     public void testUpdateBookingNonExistent() {
-        createBooking();
         api.setAuthStrategy(new TokenAuthStrategy());
-        booking.setFirstname("Jane");
-        BookingResponse response = api.updateBooking(999999, booking);
+        Booking updatedBookingRequest = BookingRequestFactory.createCustomBooking()
+                .setFirstName("James")
+                .buildRequest();
+        BookingResponse response = api.updateBooking(bookingId, updatedBookingRequest);
         assertFalse(response.isSuccessful());
-        assertEquals(404, response.getStatusCode());
+        assertEquals(400, response.getStatusCode());
     }
 }

@@ -17,12 +17,26 @@ import com.heroku.app.model.BookingResponseWrapper;
 public class BookingResponseAdapter implements BookingResponse {
     private final Response response;
     private BookingResponseWrapper wrapper;
+    private Booking directBooking;
 
     public BookingResponseAdapter(Response response) {
         this.response = response;
-        if (response.getStatusCode() == 200 && response.getBody().asString().contains("bookingid")) {
-            this.wrapper = response.as(BookingResponseWrapper.class);
+
+        if (response.getStatusCode() == 200 || response.getStatusCode() == 201) {
+            String contentType = response.getContentType();
+
+            if (contentType != null && contentType.contains("application/json")) {
+                String json = response.getBody().asString();
+
+                if (json.contains("bookingid")) {
+                    this.wrapper = response.as(BookingResponseWrapper.class);
+                } else {
+                    this.directBooking = response.as(Booking.class);
+                }
+            } else {
+                System.err.println("⚠️ Skipping JSON parsing: unsupported content type: " + contentType);
             }
+        }
     }
 
     @Override
@@ -40,8 +54,12 @@ public class BookingResponseAdapter implements BookingResponse {
         return response;
     }
 
-    @Override
     public Booking getBookingDetails() {
-        return wrapper != null ? wrapper.getBooking() : null;
+        if (wrapper != null) {
+            return wrapper.getBooking();
+        } else if (directBooking != null) {
+            return directBooking;
+        }
+        return null;
     }
 }

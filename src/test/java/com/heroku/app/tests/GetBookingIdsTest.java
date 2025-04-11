@@ -8,6 +8,7 @@ import com.heroku.app.api.response.BookingResponse;
 import com.heroku.app.base.BaseBookingTest;
 import com.heroku.app.model.BookingDates;
 import com.heroku.app.model.BookingResponseWrapper;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -17,7 +18,9 @@ public class GetBookingIdsTest extends BaseBookingTest {
     private String customFirstName = "CustomFirstName";
 
     @Test
+    @Tag("Smoke")
     public void testGetBookingIdsPositive() {
+        //TODO Add some logic inside, since it no extends from Template class
     }
 
     @Test
@@ -29,12 +32,12 @@ public class GetBookingIdsTest extends BaseBookingTest {
                 .setDepositPaid(true)
                 .setBookingDates(new BookingDates("2025-01-01", "2025-01-06"))
                 .buildRequest();
-        BookingResponse createResponse = api.createBooking(booking);
+        BookingResponse createResponse = loggedApi.createBooking(booking);
         bookingId = createResponse.getBody().as(BookingResponseWrapper.class).getBookingid();
 
         Map<String, String> queryParams = new HashMap<>();
         queryParams.put("firstname", customFirstName);
-        BookingResponse response = api.getBookingIds(queryParams);
+        BookingResponse response = loggedApi.getBookingIds(queryParams);
         assertTrue(response.isSuccessful());
         assertEquals(200, response.getStatusCode());
         String responseBody = response.getBody().asString();
@@ -45,7 +48,7 @@ public class GetBookingIdsTest extends BaseBookingTest {
     public void testGetBookingIdsInvalidQueryParam() {
         Map<String, String> queryParams = new HashMap<>();
         queryParams.put("invalidParam", "value");
-        BookingResponse response = api.getBookingIds(queryParams);
+        BookingResponse response = loggedApi.getBookingIds(queryParams);
         assertTrue(response.isSuccessful()); // API ignores invalid params
         assertEquals(200, response.getStatusCode());
     }

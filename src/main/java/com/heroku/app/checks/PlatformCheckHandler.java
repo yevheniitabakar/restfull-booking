@@ -1,6 +1,8 @@
 package com.heroku.app.checks;
 
 import com.heroku.app.api.BookingApiFacade;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -11,15 +13,17 @@ import com.heroku.app.api.BookingApiFacade;
  * stopping the chain and preventing the test suite from running.
  */
 public class PlatformCheckHandler extends PreTestCheckHandler {
+    public static final Logger logger = LoggerFactory.getLogger(PlatformCheckHandler.class.getSimpleName());
+
     @Override
     protected boolean performCheck(BookingApiFacade apiFacade) {
-        System.out.println("Checking if the platform is macOS...");
+        logger.info("Checking if the platform is macOS...");
         String osName = System.getProperty("os.name").toLowerCase();
         if (osName.contains("mac")) {
-            System.out.println("Platform check passed! Running on macOS.");
+            logger.info("Platform check passed! Running on macOS.");
             return true;
         } else {
-            System.err.println("Platform check failed! This suite is designed to run only on macOS.");
+            logger.warn("Platform check failed! This suite is designed to run only on macOS.");
             return false;
         }
     }

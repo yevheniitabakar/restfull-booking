@@ -11,6 +11,7 @@ import com.heroku.app.api.builder.BookingRequestFactory;
 import com.heroku.app.api.response.BookingResponse;
 import com.heroku.app.base.TemplateBaseBookingTest;
 import com.heroku.app.model.BookingResponseWrapper;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 public class DeleteBookingTests extends TemplateBaseBookingTest {
@@ -22,7 +23,7 @@ public class DeleteBookingTests extends TemplateBaseBookingTest {
 
     @Override
     protected BookingResponse performAction() {
-        BookingResponse response = api.createBooking(booking);
+        BookingResponse response = loggedApi.createBooking(booking);
         bookingId = response.getBody().as(BookingResponseWrapper.class).getBookingid();
         return response;
     }
@@ -33,6 +34,7 @@ public class DeleteBookingTests extends TemplateBaseBookingTest {
     }
 
     @Test
+    @Tag("Smoke")
     public void testDeleteBookingWithTokenAuth() {
         api.setAuthStrategy(new TokenAuthStrategy());
         BookingResponse deleteResponse = api.deleteBooking(bookingId);
@@ -43,7 +45,7 @@ public class DeleteBookingTests extends TemplateBaseBookingTest {
     @Test
     public void testDeleteBookingWithBasicAuth() {
         api.setAuthStrategy(new BasicAuthStrategy("admin", "password123"));
-        BookingResponse deleteResponse = api.deleteBooking(bookingId);
+        BookingResponse deleteResponse = loggedApi.deleteBooking(bookingId);
 
         assertTrue(deleteResponse.isSuccessful());
     }
@@ -51,7 +53,7 @@ public class DeleteBookingTests extends TemplateBaseBookingTest {
     @Test
     public void testDeleteBookingMissingId() {
         api.setAuthStrategy(new TokenAuthStrategy());
-        BookingResponse deleteResponse = api.deleteBooking(999999);
+        BookingResponse deleteResponse = loggedApi.deleteBooking(999999);
 
         assertFalse(deleteResponse.isSuccessful());
         assertEquals(405, deleteResponse.getStatusCode());
@@ -60,7 +62,7 @@ public class DeleteBookingTests extends TemplateBaseBookingTest {
     @Test
     public void testDeleteBookingMissingAuth() {
         api.setAuthStrategy(new NoAuthStrategy());
-        BookingResponse deleteResponse = api.deleteBooking(bookingId);
+        BookingResponse deleteResponse = loggedApi.deleteBooking(bookingId);
 
         assertFalse(deleteResponse.isSuccessful());
         assertEquals(403, deleteResponse.getStatusCode());

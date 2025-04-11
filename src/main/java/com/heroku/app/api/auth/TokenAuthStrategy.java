@@ -4,6 +4,8 @@ import static io.restassured.RestAssured.given;
 
 import io.restassured.specification.RequestSpecification;
 import com.heroku.app.model.AuthCredentials;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implements the Strategy design pattern for token-based authentication using a Cookie header.
@@ -14,6 +16,7 @@ import com.heroku.app.model.AuthCredentials;
  * </p>
  */
 public class TokenAuthStrategy implements AuthStrategy {
+    public static final Logger logger = LoggerFactory.getLogger(TokenAuthStrategy.class.getSimpleName());
     private final String token;
 
     public TokenAuthStrategy() {
@@ -24,11 +27,13 @@ public class TokenAuthStrategy implements AuthStrategy {
                 .jsonPath()
                 .get("token");
 
-        System.out.println("TOKEN= " + token);
+        logger.info("TOKEN= {}", token);
     }
 
     @Override
     public void applyAuth(RequestSpecification spec) {
+        logger.info("Token Authentication will be applied to the request");
+
         spec.header("Cookie", "token=" + token);
     }
 }

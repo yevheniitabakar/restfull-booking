@@ -12,6 +12,7 @@ import com.heroku.app.api.response.BookingResponse;
 import com.heroku.app.base.TemplateBaseBookingTest;
 import com.heroku.app.model.Booking;
 import com.heroku.app.model.BookingResponseWrapper;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -37,11 +38,12 @@ public class PartialUpdateBookingTest extends TemplateBaseBookingTest {
     }
 
     @Test
+    @Tag("Smoke")
     public void testPartialUpdateBookingWithTokenAuth() {
         api.setAuthStrategy(new TokenAuthStrategy());
         Map<String, Object> updates = new HashMap<>();
         updates.put("firstname", "Jane");
-        BookingResponse response = api.partialUpdateBooking(bookingId, updates);
+        BookingResponse response = loggedApi.partialUpdateBooking(bookingId, updates);
         assertTrue(response.isSuccessful());
         assertEquals(200, response.getStatusCode());
         Booking updatedBooking = response.getBookingDetails();
@@ -53,7 +55,7 @@ public class PartialUpdateBookingTest extends TemplateBaseBookingTest {
         api.setAuthStrategy(new BasicAuthStrategy("admin", "password123"));
         Map<String, Object> updates = new HashMap<>();
         updates.put("firstname", "Jane");
-        BookingResponse response = api.partialUpdateBooking(bookingId, updates);
+        BookingResponse response = loggedApi.partialUpdateBooking(bookingId, updates);
         assertTrue(response.isSuccessful());
         assertEquals(200, response.getStatusCode());
         Booking updatedBooking = response.getBookingDetails();
@@ -65,7 +67,7 @@ public class PartialUpdateBookingTest extends TemplateBaseBookingTest {
         api.setAuthStrategy(new NoAuthStrategy());
         Map<String, Object> updates = new HashMap<>();
         updates.put("firstname", "Jane");
-        BookingResponse response = api.partialUpdateBooking(bookingId, updates);
+        BookingResponse response = loggedApi.partialUpdateBooking(bookingId, updates);
         assertFalse(response.isSuccessful());
         assertEquals(403, response.getStatusCode());
     }
@@ -75,7 +77,7 @@ public class PartialUpdateBookingTest extends TemplateBaseBookingTest {
         api.setAuthStrategy(new TokenAuthStrategy());
         Map<String, Object> updates = new HashMap<>();
         updates.put("firstname", "Jane");
-        BookingResponse response = api.partialUpdateBooking(999999, updates);
+        BookingResponse response = loggedApi.partialUpdateBooking(999999, updates);
         assertFalse(response.isSuccessful());
         assertEquals(405, response.getStatusCode());
     }

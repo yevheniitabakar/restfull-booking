@@ -1,8 +1,10 @@
 package com.heroku.app.api.response;
 
-import io.restassured.response.Response;
 import com.heroku.app.model.Booking;
 import com.heroku.app.model.BookingResponseWrapper;
+import io.restassured.response.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -15,6 +17,7 @@ import com.heroku.app.model.BookingResponseWrapper;
  * </p>
  */
 public class BookingResponseAdapter implements BookingResponse {
+    private static final Logger logger = LoggerFactory.getLogger(BookingResponseAdapter.class.getSimpleName());
     private final Response response;
     private BookingResponseWrapper wrapper;
     private Booking directBooking;
@@ -34,7 +37,7 @@ public class BookingResponseAdapter implements BookingResponse {
                     this.directBooking = response.as(Booking.class);
                 }
             } else {
-                System.err.println("⚠️ Skipping JSON parsing: unsupported content type: " + contentType);
+                logger.warn("Skipping JSON parsing: unsupported content type: {}", contentType);
             }
         }
     }

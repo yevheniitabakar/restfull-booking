@@ -2,6 +2,8 @@ package com.heroku.app.checks;
 
 import com.heroku.app.api.BookingApiFacade;
 import com.heroku.app.api.response.BookingResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -12,13 +14,15 @@ import com.heroku.app.api.response.BookingResponse;
  * stopping the chain and preventing the test suite from running.
  */
 public class HealthCheckHandler extends PreTestCheckHandler {
+    private static final Logger logger = LoggerFactory.getLogger(HealthCheckHandler.class.getSimpleName());
 
     @Override
     protected boolean performCheck(BookingApiFacade api) {
+        logger.info("Running health check...");
         BookingResponse response = api.healthCheck();
 
         if (response.getStatusCode() == 201) {
-            System.out.println("Health check passed! All systems are ready.");
+            logger.info("Health check passed.");
             return true;
         } else {
             System.err.println("Health check failed! API is not responding properly.");

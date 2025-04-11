@@ -2,6 +2,8 @@ package com.heroku.app.api.auth;
 
 import io.restassured.specification.RequestSpecification;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Base64;
 
@@ -16,6 +18,7 @@ import java.util.Base64;
  */
 @AllArgsConstructor
 public class BasicAuthStrategy implements AuthStrategy {
+    public static final Logger logger = LoggerFactory.getLogger(TokenAuthStrategy.class.getSimpleName());
     private final String username;
     private final String password;
 
@@ -23,6 +26,8 @@ public class BasicAuthStrategy implements AuthStrategy {
     public void applyAuth(RequestSpecification spec) {
         String credentials = username + ":" + password;
         String encodedCredentials = Base64.getEncoder().encodeToString(credentials.getBytes());
+        logger.info("Basic Authentication will be applied to the request");
+
         spec.header("Authorization", "Basic " + encodedCredentials);
     }
 }

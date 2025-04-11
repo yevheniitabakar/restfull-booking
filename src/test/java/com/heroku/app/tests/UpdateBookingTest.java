@@ -12,6 +12,7 @@ import com.heroku.app.base.TemplateBaseBookingTest;
 import com.heroku.app.model.Booking;
 import com.heroku.app.model.BookingDates;
 import com.heroku.app.model.BookingResponseWrapper;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 
@@ -35,6 +36,7 @@ public class UpdateBookingTest extends TemplateBaseBookingTest {
     }
 
     @Test
+    @Tag("Smoke")
     public void testUpdateBookingWithTokenAuth() {
     }
 
@@ -50,7 +52,7 @@ public class UpdateBookingTest extends TemplateBaseBookingTest {
                 .setBookingDates(new BookingDates("2025-04-04", "2025-04-08"))
                 .setAdditionalNeeds("Balcony")
                 .buildRequest();
-        BookingResponse response = api.updateBooking(bookingId, updatedBookingRequest);
+        BookingResponse response = loggedApi.updateBooking(bookingId, updatedBookingRequest);
         assertTrue(response.isSuccessful());
         assertEquals(200, response.getStatusCode());
         Booking updatedBooking = response.getBookingDetails();
@@ -61,7 +63,7 @@ public class UpdateBookingTest extends TemplateBaseBookingTest {
     public void testUpdateBookingMissingAuth() {
         api.setAuthStrategy(null);
         booking.setFirstname("Jane");
-        BookingResponse response = api.updateBooking(bookingId, booking);
+        BookingResponse response = loggedApi.updateBooking(bookingId, booking);
         assertFalse(response.isSuccessful());
         assertEquals(403, response.getStatusCode());
     }
@@ -72,7 +74,7 @@ public class UpdateBookingTest extends TemplateBaseBookingTest {
         Booking updatedBookingRequest = BookingRequestFactory.createCustomBooking()
                 .setFirstName("James")
                 .buildRequest();
-        BookingResponse response = api.updateBooking(bookingId, updatedBookingRequest);
+        BookingResponse response = loggedApi.updateBooking(bookingId, updatedBookingRequest);
         assertFalse(response.isSuccessful());
         assertEquals(400, response.getStatusCode());
     }

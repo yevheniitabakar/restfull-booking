@@ -23,7 +23,7 @@ import java.util.Map;
  * centralizes API interactions, making the test framework easier to use and maintain.
  * </p>
  */
-public class BookingApiFacade {
+public class BookingApiFacade implements BookingApi {
     @Getter
     private final RestClientConfig clientConfig = RestClientConfig.getInstance();
     @Setter

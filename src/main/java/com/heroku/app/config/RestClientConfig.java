@@ -19,6 +19,6 @@ public class RestClientConfig {
     // Private constructor to prevent instantiation
     private RestClientConfig() {
         RestAssured.baseURI = "https://restful-booker.herokuapp.com";
-        RestAssured.filters(new RequestLoggingFilter(), new ResponseLoggingFilter());
+//        RestAssured.filters(new RequestLoggingFilter(), new ResponseLoggingFilter());
     }
 }

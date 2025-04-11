@@ -43,31 +43,7 @@ You can also run all tests:
 ```
 ./gradlew test
 ```
-
 > Note: Logging is fully configured via `logback.xml`. Logs will appear in the console and `logs/framework.log`.
-
----
-
-## 📁 Project Structure (Important Highlights)
-```
-src
-├── main
-│   └── java
-│       └── com.heroku.app
-│           ├── api         ← Authentication, request builders, and facade
-│           ├── checks      ← Chain of Responsibility handlers
-│           ├── config      ← Singleton setup for RestAssured
-│           ├── factory     ← Factory classes for bookings
-│           ├── model       ← POJOs for requests and responses
-│           └── response    ← Adapters for API responses
-├── test
-│   └── java
-│       └── com.heroku.app
-│           ├── base        ← Template pattern base classes
-│           ├── hooks       ← JUnit 5 extensions for pre-checks and logging
-│           ├── suites      ← Test suites (Regression, Smoke)
-│           └── tests       ← Actual test classes for each endpoint
-```
 
 ---
 

@@ -41,7 +41,7 @@ For smoke tests:
 
 You can also run all tests:
 ```
-`./gradlew test`
+./gradlew test
 ```
 
 > Note: Logging is fully configured via `logback.xml`. Logs will appear in the console and `logs/framework.log`.
